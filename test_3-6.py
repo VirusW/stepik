@@ -41,7 +41,8 @@ class TestLesson:
         except TimeoutException:
             pass
         answer = math.log(int(time.time()))
-        text_area = WebDriverWait(browser, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "textarea")))
+        css = "textarea.string-quiz__textarea.ember-text-area.ember-view"
+        text_area = WebDriverWait(browser, 100).until(EC.element_to_be_clickable((By.CSS_SELECTOR, css)))
         text_area.send_keys(str(answer))
 
         submit = browser.find_element_by_css_selector("button.submit-submission")
