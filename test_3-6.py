@@ -23,17 +23,18 @@ class TestLesson:
 
     @pytest.mark.parametrize("url", links[:])
     def test_function(self, browser, url):
+        # Login
         browser.get("https://stepik.org/catalog?auth=login&language=en")
-
         nam = WebDriverWait(browser, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'input[name="login"]')))
         nam.send_keys("alexandr.bezpalyi@gmail.com")
         password = browser.find_element_by_css_selector('input[name="password"]')
         password.send_keys("Fhutjgnthbrc1!")
         submit = browser.find_element_by_css_selector("button.sign-form__btn.button_with-loader")
         submit.click()
-
+        # Check if login is successful
         navbar = "div.drop-down__toggler.drop-down-toggler > button.navbar__profile-toggler"
-        WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, navbar)))
+        WebDriverWait(browser, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, navbar)))
+        time.sleep(10) # Strange error after login in FF, don't know why :(
         browser.get(url)
         try:
             solve_again = WebDriverWait(browser, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button.again-btn.white")))
@@ -42,11 +43,11 @@ class TestLesson:
             pass
         answer = math.log(int(time.time()))
         css = "textarea.string-quiz__textarea.ember-text-area.ember-view"
-        text_area = WebDriverWait(browser, 100).until(EC.element_to_be_clickable((By.CSS_SELECTOR, css)))
+        text_area = WebDriverWait(browser, 20).until(EC.element_to_be_clickable((By.CSS_SELECTOR, css)))
         text_area.send_keys(str(answer))
 
         submit = browser.find_element_by_css_selector("button.submit-submission")
         submit.click()
-        result = WebDriverWait(browser, 100).until(
+        result = WebDriverWait(browser, 10).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, "div.attempt__message > div > pre.smart-hints__hint")))
         assert result.text == "Correct!"
